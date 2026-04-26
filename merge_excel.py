@@ -10,21 +10,22 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
-# ---- ADD RUN BUTTON ----
 run = st.button("🚀 Merge Files")
 
 if uploaded_files and run:
 
     df_list = []
+    original_columns = None  # store header of first file
 
     for i, file in enumerate(uploaded_files):
 
-        # FORCE ALL DATA AS TEXT (IMPORTANT FIX)
         df = pd.read_excel(file, dtype=str)
 
-        # remove duplicate header rows from later files
-        if i != 0:
-            df = df.iloc[1:]
+        if i == 0:
+            original_columns = list(df.columns)
+        else:
+            # Remove only rows that EXACTLY match header
+            df = df[~(df.apply(lambda row: list(row) == original_columns, axis=1))]
 
         df_list.append(df)
 
@@ -33,7 +34,6 @@ if uploaded_files and run:
     st.write("### Preview")
     st.dataframe(merged_df)
 
-    # ---- EXPORT AS REAL EXCEL (NOT CSV) ----
     output = BytesIO()
 
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
