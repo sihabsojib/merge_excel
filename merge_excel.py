@@ -4,7 +4,7 @@ from io import BytesIO
 
 st.set_page_config(page_title="Excel Merger", page_icon="📊")
 
-st.title("📊 Excel Merger App )")
+st.title("📊 Excel Merger App")
 
 # -------------------------------
 # Initialize uploader key
